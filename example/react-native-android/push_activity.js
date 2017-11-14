@@ -44,6 +44,13 @@ export default class PushActivity extends React.Component {
 		this.onGetRegistrationIdPress = this.onGetRegistrationIdPress.bind(this);
 		this.jumpSecondActivity = this.jumpSecondActivity.bind(this);
 	}
+	
+	cb(map){
+		this.setState({
+			pushMsg: map.message
+			});
+		console.log("extras: " + map.extras);
+	}
 
 	jumpSetActivity() {
 		this.props.navigation.navigate("Setting");
@@ -94,12 +101,7 @@ export default class PushActivity extends React.Component {
 		JPushModule.notifyJSDidLoad((resultCode) => {
 			if (resultCode === 0) {}
 		});
-		JPushModule.addReceiveCustomMsgListener((map) => {
-			this.setState({
-				pushMsg: map.message
-			});
-			console.log("extras: " + map.extras);
-		});
+		JPushModule.addReceiveCustomMsgListener(this.cb);
 		JPushModule.addReceiveNotificationListener((map) => {
 			console.log("alertContent: " + map.alertContent);
 			console.log("extras: " + map.extras);
@@ -130,7 +132,7 @@ export default class PushActivity extends React.Component {
 	}
 
 	componentWillUnmount() {
-		JPushModule.removeReceiveCustomMsgListener(receiveCustomMsgEvent);
+		JPushModule.removeReceiveCustomMsgListener(this.cb);
 		JPushModule.removeReceiveNotificationListener(receiveNotificationEvent);
 		JPushModule.removeReceiveOpenNotificationListener(openNotificationEvent);
 		JPushModule.removeGetRegistrationIdListener(getRegistrationIdEvent);
